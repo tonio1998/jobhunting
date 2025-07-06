@@ -11,16 +11,16 @@ import AppLogo from './AppLogo.vue';
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard', // ✅ Route
+        href: '/dashboard',
         icon: LayoutGrid,
     },
     {
         title: 'User Management',
         icon: LayoutGrid,
         children: [
-            { title: 'All Users', href: '/users' },       // ✅ Route
-            { title: 'Roles', href: '/roles' },           // ✅ Route
-            { title: 'Permissions', href: '/permissions' } // ✅ Route
+            { title: 'All Users', href: '/users' }, 
+            { title: 'Roles', href: '/roles' },       
+            { title: 'Permissions', href: '/permissions' }
         ],
     },
 ];
@@ -28,12 +28,12 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit', // ✅ External Route
+        href: 'https://github.com/laravel/vue-starter-kit', 
         icon: Folder,
     },
     {
         title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue', // ✅ External Route
+        href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
 ];

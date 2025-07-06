@@ -1,5 +1,9 @@
 @import 'tailwindcss';
+@plugin "daisyui";
 
+@plugin "daisyui" {
+  themes: nord --default, abyss --prefersdark, cupcake, dracula;
+}
 @import 'tw-animate-css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

@@ -21,7 +21,6 @@ const toggleItem = (title: string) => {
 <template>
     <SidebarMenu>
         <template v-for="item in items" :key="item.title">
-            <!-- If the item has children -->
             <SidebarMenuItem>
                 <template v-if="item.children && item.children.length">
                     <SidebarMenuButton class="w-full flex items-center gap-2" @click="toggleItem(item.title)">
@@ -30,7 +29,6 @@ const toggleItem = (title: string) => {
                         <span class="ml-auto text-xs">{{ openItems[item.title] ? '▾' : '▸' }}</span>
                     </SidebarMenuButton>
 
-                    <!-- Sublinks -->
                     <div v-if="openItems[item.title]" class="ml-6 mt-1 space-y-1">
                         <SidebarMenuItem
                             v-for="child in item.children"
@@ -44,7 +42,6 @@ const toggleItem = (title: string) => {
                     </div>
                 </template>
 
-                <!-- If the item is a regular link -->
                 <template v-else>
                     <SidebarMenuButton as-child>
                         <Link :href="item.href" class="flex items-center gap-2">

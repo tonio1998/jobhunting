@@ -6,11 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +24,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'current_location',
+        'phone_number',
+        'role',
+        'avatar',
+        'profile_pic'
     ];
 
     /**
@@ -44,5 +52,51 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getInfoAttribute()
+    {
+        if ($this->role === 'homeowner') {
+            return $this->hasOne(Homeowner::class, 'user_id')->first();
+        } elseif ($this->role === 'worker') {
+            return $this->hasOne(Workers::class, 'UserID')->first();
+        }
+
+        return null;
+    }
+
+    public function profile(){
+        return $this->hasOne(WorkerProfile::class, 'UserID');
+    }
+
+    public function earnings(){
+        return $this->hasMany(Payment::class, 'user_id', 'id');
+    }
+
+    public function info()
+    {
+        return $this->role === 'homeowner'
+            ? $this->hasOne(Homeowner::class, 'user_id')
+            : $this->hasOne(Workers::class, 'UserID');
+    }
+
+    public function jobs(){
+        return $this->hasMany(Jobs::class, 'homeowner_id');
+    }
+
+    public function skills(){
+        return $this->hasMany(WorkerSkill::class, 'UserID');
+    }
+
+    public function files(){
+        return $this->hasMany(WorkerAttachments::class, 'UserID');
+    }
+
+    public function rating(){
+        return $this->hasOne(SkilledWorker::class, 'user_id');
+    }
+
+    public function bids(){
+        return $this->hasMany(Bid::class, 'UserID');
     }
 }
