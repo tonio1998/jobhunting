@@ -71,4 +71,25 @@ class RolesController extends Controller
         return response()->json(['message' => 'Permission moved.']);
     }
 
+    public function editPermissions(Role $role)
+    {
+        return Inertia::render('Roles/EditPermissions', [
+            'role' => $role->load('permissions'),
+            'allPermissions' => Permission::all(),
+        ]);
+    }
+
+    public function updatePermissions(Request $request, Role $role)
+    {
+        $validated = $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id',
+        ]);
+
+        // Assign selected permissions to the role
+        $role->syncPermissions($validated['permissions']);
+
+        return redirect()->route('roles.index')->with('success', 'Permissions assigned successfully.');
+    }
+
 }

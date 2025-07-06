@@ -9,6 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     IconHeroiconsOutlineCheck: typeof import('~icons/heroicons-outline/check')['default']
+    IconHeroiconsOutlineKey: typeof import('~icons/heroicons-outline/key')['default']
     IconHeroiconsOutlinePaperAirplane: typeof import('~icons/heroicons-outline/paper-airplane')['default']
+    IconHeroiconsOutlinePencilSquare: typeof import('~icons/heroicons-outline/pencil-square')['default']
+    IconHeroiconsOutlineTrash: typeof import('~icons/heroicons-outline/trash')['default']
   }
 }
