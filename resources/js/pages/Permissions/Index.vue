@@ -1,37 +1,68 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
-    permissions: Object,
+    permissions: Array, // make sure it's an array of permission objects
 });
+
+const deletePermission = (id: number) => {
+    if (confirm('Are you sure you want to delete this permission?')) {
+        router.delete(`/permissions/${id}`);
+    }
+};
 </script>
 
 <template>
     <Head title="Permissions" />
 
     <AppLayout>
-        <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4">Permissions</h1>
+        <div class="w-full mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">Permissions</h1>
+                <Link
+                    href="/permissions/create"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm"
+                >
+                    + New Permission
+                </Link>
+            </div>
 
-            <table class="table w-full">
+            <table class="table w-full border">
                 <thead>
-                    <tr class="bg-gray-100 text-sm">
-                        <th class="py-2 px-4 text-left">Permission</th>
-                        <th class="py-2 px-4 text-left">Assigned to Roles</th>
+                    <tr class="bg-gray-100 text-sm text-left">
+                        <th class="py-2 px-4">Permission</th>
+                        <th class="py-2 px-4">Assigned to Roles</th>
+                        <th class="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="permission in permissions" :key="permission.id" class="border-t">
-                        <td class="py-2 px-4">{{ permission.name }}</td>
+                    <tr v-for="permission in permissions" :key="permission.id" class="border-t hover:bg-gray-50">
+                        <td class="py-2 px-4 font-medium">{{ permission.name }}</td>
                         <td class="py-2 px-4">
-                            <span
-                                v-for="role in permission.roles"
-                                :key="role.id"
-                                class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2 mb-1"
+                            <div class="flex flex-wrap gap-1">
+                                <span
+                                    v-for="role in permission.roles"
+                                    :key="role.id"
+                                    class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                                >
+                                    {{ role.name }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-2 px-4 space-x-2 whitespace-nowrap">
+                            <Link
+                                :href="`/permissions/${permission.id}/edit`"
+                                class="text-blue-600 text-sm hover:underline"
                             >
-                                {{ role.name }}
-                            </span>
+                                Edit
+                            </Link>
+                            <button
+                                @click="deletePermission(permission.id)"
+                                class="text-red-600 text-sm hover:underline"
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </tbody>

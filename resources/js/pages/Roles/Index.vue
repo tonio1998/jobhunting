@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import draggable from 'vuedraggable';
 
 const props = defineProps({
-    roles: Array, // roles with permissions
+    roles: Array,
 });
 
-const roles = ref(JSON.parse(JSON.stringify(props.roles))); // clone to make draggable reactive
 const newRole = ref('');
 
 const addRole = () => {
@@ -18,87 +16,86 @@ const addRole = () => {
     });
 };
 
-const updateRoleName = (role) => {
-    router.put(`/roles/${role.id}`, { name: role.name });
-};
-
-const deleteRole = (roleId) => {
-    if (confirm('Are you sure?')) {
+const deleteRole = (roleId: number) => {
+    if (confirm('Are you sure you want to delete this role?')) {
         router.delete(`/roles/${roleId}`);
-    }
-};
-
-const onDrop = (event) => {
-    const { item, from, to } = event;
-    const permission = item;
-    const fromRoleId = parseInt(from.dataset.roleId);
-    const toRoleId = parseInt(to.dataset.roleId);
-
-    if (fromRoleId !== toRoleId) {
-        router.post('/roles/move-permission', {
-            permission_id: permission.id,
-            from_role_id: fromRoleId,
-            to_role_id: toRoleId,
-        });
     }
 };
 </script>
 
 <template>
     <Head title="Roles" />
-    <AppLayout>
-        <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Roles</h1>
 
+    <AppLayout>
+        <div class="w-full mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Roles Management</h1>
+
+            <!-- Add Role -->
             <div class="mb-6 flex gap-4">
                 <input
                     type="text"
                     v-model="newRole"
-                    placeholder="New Role"
+                    placeholder="New Role Name"
                     class="border rounded px-4 py-2 w-64"
                 />
-                <button @click="addRole" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                <button @click="addRole" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                     Add Role
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div
-                    v-for="role in roles"
-                    :key="role.id"
-                    class="bg-white rounded-lg border shadow p-4"
-                >
-                    <div class="flex justify-between items-center mb-2">
-                        <input
-                            class="font-bold text-lg text-gray-700 border-b border-gray-300 focus:outline-none focus:border-indigo-500 w-full"
-                            v-model="role.name"
-                            @blur="updateRoleName(role)"
-                        />
-                        <button @click="deleteRole(role.id)" class="text-red-500 text-sm ml-2 hover:underline">Delete</button>
-                    </div>
-
-                    <draggable
-                        v-model="role.permissions"
-                        group="permissions"
-                        item-key="id"
-                        class="min-h-[60px]"
-                        @change="onDrop"
-                        :data-role-id="role.id"
-                    >
-                        <template #item="{ element }">
-                            <div
-                                class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded mr-2 mb-2 cursor-move"
-                            >
-                                {{ element.name }}
-                            </div>
-                        </template>
-                    </draggable>
-                </div>
+            <!-- Roles Table -->
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="table-auto w-full text-left border border-gray-200">
+                    <thead class="bg-gray-100 text-gray-700 text-sm">
+                        <tr>
+                            <th class="px-4 py-3">Role</th>
+                            <th class="px-4 py-3">Permissions</th>
+                            <th class="px-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="role in props.roles" :key="role.id" class="border-t">
+                            <td class="px-4 py-3 font-medium text-gray-800">
+                                {{ role.name }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex flex-wrap gap-1">
+                                    <span
+                                        v-for="perm in role.permissions"
+                                        :key="perm.id"
+                                        class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded"
+                                    >
+                                        {{ perm.name }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap space-x-2">
+                                <Link
+                                    :href="`/roles/${role.id}/edit`"
+                                    class="btn btn-sm bg-green-100 border border-0 text-green-800"
+                                >
+                                    <IconHeroiconsOutlinePencilSquare  class="w-5 h-5" />
+                                    Edit
+                                </Link>
+                                <Link
+                                    :href="`/roles/${role.id}/permissions`"
+                                    class="btn btn-sm bg-blue-100 border border-0 text-blue-800"
+                                >
+                                    <IconHeroiconsOutlineKey   class="w-5 h-5" />
+                                    Assign Permissions
+                                </Link>
+                                <button
+                                    @click="deleteRole(role.id)"
+                                    class="btn btn-sm bg-red-100 border border-0 text-red-800"
+                                >
+                                    <IconHeroiconsOutlineTrash   class="w-5 h-5" />
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-/* Optional styling tweaks */
-</style>

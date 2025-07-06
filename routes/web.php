@@ -32,10 +32,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('MapView');
     });
 
+    Route::prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', [RolesController::class, 'index'])->name('index');
+        Route::get('/{role}/edit', [RolesController::class, 'edit'])->name('edit');
+        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('destroy');
+        Route::put('/{role}/update', [RolesController::class, 'update'])->name('update');
+        Route::get('/{role}/permissions', [RolesController::class, 'editPermissions']);
+        Route::put('/{role}/permissions', [RolesController::class, 'updatePermissions'])->name('permissions.update');
+    });
 
-    Route::resource('roles', RolesController::class)->except('show');
-    Route::resource('permissions', PermissionController::class)->except('show');
-    Route::post('/roles/move-permission', [RolesController::class, 'movePermission']);
+    Route::prefix('permissions')->name('permissions.')->group(function () {
+        Route::resource('permissions', PermissionController::class)->except('show');
+    });
 
 
 });

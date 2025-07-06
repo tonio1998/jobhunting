@@ -19,27 +19,29 @@ function submit() {
 
 <template>
     <Head title="Edit Role" />
+
     <AppLayout>
-        <div class="max-w-3xl mx-auto py-10">
-            <h1 class="text-2xl font-bold mb-6">Edit Role</h1>
+        <div class="max-w-7xl w-10xl mx-auto py-10 px-4">
+            <h1 class="text-3xl font-bold mb-6">Edit Role</h1>
 
-            <form @submit.prevent="submit" class="space-y-4">
-                <div>
-                    <label class="block font-medium">Role Name</label>
-                    <input v-model="form.name" type="text" class="input input-bordered w-full" required />
+            <form @submit.prevent="submit" class="space-y-6">
+                <!-- Role Name -->
+                <div class="form-control">
+                    <label class="label font-medium text-sm">Role Name</label>
+                    <input
+                        v-model="form.name"
+                        type="text"
+                        class="input input-bordered w-full"
+                        required
+                    />
                 </div>
 
-                <div>
-                    <label class="block font-medium">Permissions</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label v-for="perm in permissions" :key="perm.id" class="flex items-center gap-2">
-                            <input type="checkbox" :value="perm.name" v-model="form.permissions" />
-                            {{ perm.name }}
-                        </label>
-                    </div>
+                <!-- Submit -->
+                <div class="flex justify-end">
+                    <button type="submit" class="btn btn-success px-6">
+                        Update Role
+                    </button>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Update</button>
             </form>
         </div>
     </AppLayout>
