@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import type { BreadcrumbItem } from '@/types';
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Permissions Management',
+        href: '/permissions',
+    },
+];
 
 const props = defineProps({
     permissions: Array, // make sure it's an array of permission objects
@@ -16,7 +23,7 @@ const deletePermission = (id: number) => {
 <template>
     <Head title="Permissions" />
 
-    <AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="w-full mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Permissions</h1>
@@ -53,14 +60,16 @@ const deletePermission = (id: number) => {
                         <td class="py-2 px-4 space-x-2 whitespace-nowrap">
                             <Link
                                 :href="`/permissions/${permission.id}/edit`"
-                                class="text-blue-600 text-sm hover:underline"
+                                class="btn btn-sm bg-green-100 border border-0 text-green-800"
                             >
+                                <IconHeroiconsOutlinePencilSquare  class="w-5 h-5" />
                                 Edit
                             </Link>
                             <button
                                 @click="deletePermission(permission.id)"
-                                class="text-red-600 text-sm hover:underline"
+                                class="btn btn-sm bg-red-100 border border-0 text-red-800"
                             >
+                                <IconHeroiconsOutlineTrash   class="w-5 h-5" />
                                 Delete
                             </button>
                         </td>

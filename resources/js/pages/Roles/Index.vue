@@ -2,6 +2,14 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import type { BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Roles Management',
+        href: '/roles',
+    },
+];
 
 const props = defineProps({
     roles: Array,
@@ -26,7 +34,7 @@ const deleteRole = (roleId: number) => {
 <template>
     <Head title="Roles" />
 
-    <AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="w-full mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Roles Management</h1>
 

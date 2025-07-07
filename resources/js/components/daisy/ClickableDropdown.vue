@@ -1,65 +1,67 @@
 <template>
-  <div class="dropdown" ref="dropdownRef">
-    <button
-      class="btn m-1"
-      @click="toggleDropdown"
-      :aria-expanded="isOpen"
-    >
-      {{ buttonText }}
-    </button>
+    <div class="dropdown" ref="dropdownRef">
+        <button
+            class="btn m-1 btn-sm flex items-center gap-1"
+            @click="toggleDropdown"
+            :aria-expanded="isOpen"
+        >
+            {{ buttonText }}
+            <svg
+                :class="{ 'rotate-180': isOpen }"
+                class="w-4 h-4 transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
 
-    <ul
-      v-if="isOpen"
-      class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
-    >
-      <li v-for="(item, index) in items" :key="index">
-        <a
-          v-if="item.href"
-          :href="item.href"
-          class="block"
-          @click="isOpen = false"
+        <ul
+            v-if="isOpen"
+            class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
         >
-          {{ item.label }}
-        </a>
-        <a
-          v-else
-          href="#"
-          class="block"
-          @click.prevent="handleSelect(item)"
-        >
-          {{ item.label }}
-        </a>
-      </li>
-    </ul>
-  </div>
+            <slot v-if="$slots.default" />
+
+            <template v-else>
+                <li v-for="(item, index) in items" :key="index">
+                    <a
+                        v-if="item.href"
+                        :href="item.href"
+                        class="flex items-center gap-2"
+                        @click="isOpen = false"
+                    >
+                        <component :is="item.icon" v-if="item.icon" class="w-4 h-4" />
+                        {{ item.label }}
+                    </a>
+                    <a
+                        v-else
+                        href="#"
+                        class="flex items-center gap-2"
+                        @click.prevent="handleSelect(item)"
+                    >
+                        <component :is="item.icon" v-if="item.icon" class="w-4 h-4" />
+                        {{ item.label }}
+                    </a>
+                </li>
+            </template>
+        </ul>
+    </div>
 </template>
-
-<!-- <ClickableDropdown
-  :items="[
-    { label: 'Home', href: '/' },
-    { label: 'Profile', href: '/profile' },
-    { label: 'Custom Action', value: 'doSomething' }
-  ]"
-  button-text="Options"
-  @select="onDropdownSelect"
-/> -->
-
 <script setup>
 import { ref } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 
 const props = defineProps({
-  items: {
-    type: Array,
-    default: () => [
-      { label: 'Item 1', href: '/item-1' },
-      { label: 'Item 2', value: 'custom-action' }
-    ]
-  },
-  buttonText: {
-    type: String,
-    default: 'Menu'
-  }
+    items: {
+        type: Array,
+        default: () => []
+    },
+    buttonText: {
+        type: String,
+        default: 'Menu'
+    }
 });
 
 const emit = defineEmits(['select']);
@@ -68,15 +70,15 @@ const isOpen = ref(false);
 const dropdownRef = ref(null);
 
 const toggleDropdown = () => {
-  isOpen.value = !isOpen.value;
+    isOpen.value = !isOpen.value;
 };
 
 const handleSelect = (item) => {
-  emit('select', item);
-  isOpen.value = false;
+    emit('select', item);
+    isOpen.value = false;
 };
 
 onClickOutside(dropdownRef, () => {
-  isOpen.value = false;
+    isOpen.value = false;
 });
 </script>
