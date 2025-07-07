@@ -5,6 +5,7 @@ import { ref, watch } from 'vue';
 import SearchInput from '@/components/daisy/SearchInput.vue';
 import { useDateFormatter } from '@/composables/useDateFormatter';
 import ClickableDropdown from '@/components/daisy/ClickableDropdown.vue';
+import { KeyIcon, UserGroupIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     users: Object,
@@ -27,12 +28,19 @@ watch([search, sort, direction], () => {
     });
 });
 
+const breadcrumbs: any[] = [
+    {
+        title: 'Users',
+        href: '/users',
+    },
+];
+
 </script>
 
 <template>
     <Head title="Users" />
 
-    <AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="w-full mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <h1 class="text-2xl font-bold text-gray-800 mb-4">Users</h1>
 
@@ -62,10 +70,9 @@ watch([search, sort, direction], () => {
                             <td class="space-x-2">
                                 <ClickableDropdown
                                     :items="[
-                                        { label: 'Roles', href: `/users/${user.id}/roles` },
-                                        { label: 'Permission', href: `/users/${user.id}/permissions` },
-                                    ]"
-                                    button-text="More"
+                                        { label: 'Roles', href: `/users/${user.id}/roles`, icon: UserGroupIcon },
+                                        { label: 'Permission', href: `/users/${user.id}/permissions`, icon: KeyIcon },
+                                      ]"
                                 />
                             </td>
                             <td>
@@ -82,7 +89,7 @@ watch([search, sort, direction], () => {
                                     </div>
                                     <div>
                                         <div class="font-bold uppercase">{{ user.name }}</div>
-                                        <small>{{ user.email }}</small>
+                                        <div>{{ user.email }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -112,7 +119,7 @@ watch([search, sort, direction], () => {
                     v-html="page.label"
                     class="px-3 py-1 border rounded text-sm"
                     :class="{
-                        'bg-indigo-500 text-white': page.active,
+                        'bg-primary-500 text-white': page.active,
                         'text-gray-700 hover:bg-gray-100': !page.active
                     }"
                     />

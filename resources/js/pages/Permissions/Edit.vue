@@ -11,7 +11,7 @@ const form = useForm({
 });
 
 function submit() {
-    form.put(route('permissions.update', props.permission.id));
+    form.put(`/permissions/${props.permission.id}/update`);
 }
 </script>
 

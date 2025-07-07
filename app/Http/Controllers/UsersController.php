@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class UsersController extends Controller
 {
-    use TCommonFunctions; 
+    use TCommonFunctions;
 
     public function index(Request $request)
     {
@@ -25,7 +25,7 @@ class UsersController extends Controller
                 });
             })
             ->orderBy($sort, $direction)
-            ->paginate(6)
+            ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('Users/Index', [

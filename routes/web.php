@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UsersController;
@@ -12,12 +13,10 @@ Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-// Route::get('dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', fn() => Inertia::render('Dashboard'))->name('dashboard');
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+    });
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UsersController::class, 'index'])->name('index');
@@ -34,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [RolesController::class, 'index'])->name('index');
+        Route::post('/', [RolesController::class, 'store'])->name('store');
         Route::get('/{role}/edit', [RolesController::class, 'edit'])->name('edit');
         Route::delete('/{role}', [RolesController::class, 'destroy'])->name('destroy');
         Route::put('/{role}/update', [RolesController::class, 'update'])->name('update');
@@ -42,7 +42,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('permissions')->name('permissions.')->group(function () {
-        Route::resource('permissions', PermissionController::class)->except('show');
+        Route::get('/', [PermissionController::class, 'index'])->name('index');
+        Route::get('/create', [PermissionController::class, 'create'])->name('create');
+        Route::post('/store', [PermissionController::class, 'store'])->name('store');
+        Route::get('/{permissions}/edit', [PermissionController::class, 'edit'])->name('edit');
+        Route::delete('/{permissions}', [PermissionController::class, 'destroy'])->name('destroy');
+        Route::put('/{permissions}/update', [PermissionController::class, 'update'])->name('update');
     });
 
 

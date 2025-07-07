@@ -18,8 +18,8 @@ const mainNavItems: NavItem[] = [
         title: 'User Management',
         icon: LayoutGrid,
         children: [
-            { title: 'All Users', href: '/users' }, 
-            { title: 'Roles', href: '/roles' },       
+            { title: 'All Users', href: '/users' },
+            { title: 'Roles', href: '/roles' },
             { title: 'Permissions', href: '/permissions' }
         ],
     },
@@ -28,7 +28,7 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit', 
+        href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
     },
     {
@@ -46,7 +46,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('dashboard.index')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

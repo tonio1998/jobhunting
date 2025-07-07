@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class UserRoleController extends Controller
@@ -21,13 +22,20 @@ class UserRoleController extends Controller
 
     public function update(Request $request, User $user)
     {
+        $roles = Role::pluck('name')->toArray();
+
+        $request->merge([
+            'roles' => array_unique($request->roles ?? []),
+        ]);
+
         $request->validate([
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,name',
+            'roles'   => 'array',
+            'roles.*' => ['required', Rule::in($roles)],
         ]);
 
         $user->syncRoles($request->roles);
 
         return redirect()->route('users.index')->with('success', 'Roles updated.');
     }
+
 }

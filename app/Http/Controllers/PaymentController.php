@@ -79,7 +79,7 @@ class PaymentController extends Controller
             'Content-Type' => 'application/json',
             'x-callback-url' => env('APP_URL') . '/api/payment/xendit-webhook',
         ])->post('https://api.xendit.co/ewallets/charges', [
-            'reference_id' => uniqid('jobbie_'),
+            'reference_id' => uniqid('worklinker_'),
             'currency' => 'PHP',
             'amount' => $request->amount,
             'checkout_method' => 'ONE_TIME_PAYMENT',
