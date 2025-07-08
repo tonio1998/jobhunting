@@ -28,7 +28,8 @@ class User extends Authenticatable
         'phone_number',
         'role',
         'avatar',
-        'profile_pic'
+        'profile_pic',
+        'isVerified'
     ];
 
     /**

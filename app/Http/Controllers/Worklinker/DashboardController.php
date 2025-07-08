@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Worklinker;
+use App\Http\Controllers\Controller;
 use App\Models\Bid;
 use App\Models\Jobs;
 use App\Models\User;
