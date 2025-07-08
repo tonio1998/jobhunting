@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Worklinker;
+use App\Http\Controllers\Controller;
 
 use App\Models\Otp;
 use App\Models\User;
@@ -15,14 +16,6 @@ class PublicVerificationController extends Controller
         $request->validate([
             'phone' => 'required',
         ]);
-
-        $user = User::where('phone_number', $request->phone)->where('id', Auth::id())->first();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'The phone number is not associated with any account.',
-            ], 404);
-        }
 
         $existingOtp = Otp::where('phone', $request->phone)
             ->where('type', 'forgot-password')

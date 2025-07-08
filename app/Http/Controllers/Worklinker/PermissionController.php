@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Worklinker;
+use App\Http\Controllers\Controller;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;

@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Worklinker;
+use App\Http\Controllers\Controller;
 
 use Google\Service\CloudSourceRepositories\Repo;
 use Illuminate\Http\Request;
