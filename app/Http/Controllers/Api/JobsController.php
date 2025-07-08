@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
+use App\Models\JobFavorite;
 use App\Models\Jobs;
 use App\Models\JobSkill;
 use App\Traits\TCommonFunctions;
@@ -21,6 +22,25 @@ class JobsController extends Controller
     public function homeownerJobs($id)
     {
         return Jobs::with(['homeowner', 'skills_required.skill', 'applicants'])->where('homeowner_id', $id)->orderBy('created_at', 'desc')->get();
+    }
+
+    public function addFavorite(Request $request)
+    {
+        $id = $request->item_id;
+        $job = JobFavorite::where('JobID', $id)
+            ->where('UserID', Auth::id())
+            ->first();
+        if(!$job){
+            $new = new JobFavorite();
+            $new->JobID = $id;
+            $new->UserID = Auth::id();
+            $this->setCommonFields($new);
+            $new->save();
+        }else{
+            $job->delete();
+        }
+
+        return response()->json(['message' => 'Favorite added successfully']);
     }
 
     public function store(Request $request)
@@ -45,7 +65,7 @@ class JobsController extends Controller
         $class->start_date = date('Y-m-d', strtotime($validated['start_date']));
         $class->end_date = date('Y-m-d', strtotime($validated['end_date']));
         $class->requirements = json_encode($validated['requirements']);
-        $class->placeOfAssignment = $validated['placeOfAssignment'] ?? null;
+        $class->placeOfAssignment = json_encode($validated['placeOfAssignment'] ?? null);
         $class->placeOfAssignmentText = $validated['placeOfAssignmentText'] ?? null;
         $this->setCommonFields($class);
         $class->save();
@@ -103,7 +123,7 @@ class JobsController extends Controller
             'start_date' => date('Y-m-d', strtotime($validated['start_date'])),
             'end_date' => date('Y-m-d', strtotime($validated['end_date'])),
             'requirements' => json_encode($validated['requirements']),
-            'placeOfAssignment' => $validated['placeOfAssignment'] ?? null,
+            'placeOfAssignment' => json_encode($validated['placeOfAssignment'] ?? null),
             'placeOfAssignmentText' => $validated['placeOfAssignmentText'] ?? null,
         ]);
 

@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Worklinker\DashboardController;
+use App\Http\Controllers\Worklinker\WorkersController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\RolesController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\UserPermissionController;
-use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\Worklinker\UsersController;
+use App\Http\Controllers\Worklinker\RolesController;
+use App\Http\Controllers\Worklinker\PermissionController;
+use App\Http\Controllers\Worklinker\UserPermissionController;
+use App\Http\Controllers\Worklinker\UserRoleController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -48,6 +49,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{permissions}/edit', [PermissionController::class, 'edit'])->name('edit');
         Route::delete('/{permissions}', [PermissionController::class, 'destroy'])->name('destroy');
         Route::put('/{permissions}/update', [PermissionController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('workers')->name('workers.')->group(function () {
+        Route::get('/', [WorkersController::class, 'index'])->name('index');
     });
 
 

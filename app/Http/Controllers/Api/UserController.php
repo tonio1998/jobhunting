@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\JobFavorite;
 use App\Models\JobRequirementsSubmission;
 use App\Models\Requirement;
 use App\Models\WorkerAttachments;
@@ -228,6 +229,12 @@ class UserController extends Controller
             'user' => $user,
             'profile_pic_url' => asset('storage/' . $user->profile_pic),
         ]);
+    }
+
+    public function getFavorites($id)
+    {
+        $user = JobFavorite::where('UserID', $id)->get();
+        return json_encode($user);
     }
 
     public function updateRole(Request $request)

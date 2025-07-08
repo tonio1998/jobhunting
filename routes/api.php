@@ -8,9 +8,9 @@ use App\Http\Controllers\Api\SkillsController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PublicVerificationController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\XenditController;
+use App\Http\Controllers\Worklinker\PublicVerificationController;
+use App\Http\Controllers\Worklinker\PaymentController;
+use App\Http\Controllers\Worklinker\XenditController;
 use App\Models\User;
 use App\Models\WorkerProfile;
 use Illuminate\Http\Request;
@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{id}', [JobsController::class, 'destroy'])->name('destroy');
         Route::post('list', [JobsController::class, 'list'])->name('add-student');
         Route::get('homeowner/{id}', [JobsController::class, 'homeownerJobs'])->name('homeowner-jobs');
+        Route::post('add-favorite', [JobsController::class, 'addFavorite'])->name('add-favorite');
     });
 
     Route::prefix('skills')->name('skills.')->group(function () {
@@ -81,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/location', [UserController::class, 'saveLocation']);
         Route::put('/{id}/change-password', [UserController::class, 'changePassword']);
         Route::post('/role', [UserController::class, 'updateRole']);
+        Route::get('/{id}/favorites', [UserController::class, 'getFavorites']);
     });
 
 
