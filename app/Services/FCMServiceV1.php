@@ -26,7 +26,7 @@ class FCMServiceV1
         return $client->fetchAccessTokenWithAssertion()['access_token'];
     }
 
-    public function sendToDevice(string $deviceToken, string $title, string $body): array
+    public function sendToDevice(string $deviceToken, string $title, string $body, array $data = []): array
     {
         $accessToken = $this->getAccessToken();
 
@@ -39,6 +39,10 @@ class FCMServiceV1
                         'title' => $title,
                         'body' => $body,
                     ],
+                    'android' => [
+                        'priority' => 'HIGH',
+                    ],
+                    'data' => $data,
                 ],
             ]
         );
