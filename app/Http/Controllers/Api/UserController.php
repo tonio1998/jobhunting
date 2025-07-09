@@ -231,6 +231,18 @@ class UserController extends Controller
         ]);
     }
 
+    public function saveFcmToken(Request $request)
+    {
+        $token = $request->input('token');
+        $user = User::find(Auth::id());
+        $user->fcm_token = $token;
+        $user->save();
+        return response()->json([
+            'message' => 'FCM token saved successfully',
+            'status' => 'success',
+        ]);
+    }
+
     public function getFavorites($id)
     {
         $user = JobFavorite::where('UserID', $id)->get();

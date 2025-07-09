@@ -29,7 +29,8 @@ class User extends Authenticatable
         'role',
         'avatar',
         'profile_pic',
-        'isVerified'
+        'isVerified',
+        'fcm_token'
     ];
 
     /**
