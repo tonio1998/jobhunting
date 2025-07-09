@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SkillsController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Worklinker\PublicVerificationController;
 use App\Http\Controllers\Worklinker\PaymentController;
 use App\Http\Controllers\Worklinker\XenditController;
@@ -83,8 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}/change-password', [UserController::class, 'changePassword']);
         Route::post('/role', [UserController::class, 'updateRole']);
         Route::get('/{id}/favorites', [UserController::class, 'getFavorites']);
+        Route::post('/save-fcm-token', [UserController::class, 'saveFcmToken']);
     });
-
 
     Route::prefix('chats')->name('chats.')->group(function () {
         Route::get('/', [ChatController::class, 'listConversations']);
@@ -120,7 +121,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/gcash/charge', [PaymentController::class, 'gcashCharge']);
     Route::post('/payment/xendit-webhook', [XenditController::class, 'handleWebhook']);
-
 });
 
 Route::prefix('verify')->name('verify.')->group(function () {
@@ -128,6 +128,7 @@ Route::prefix('verify')->name('verify.')->group(function () {
     Route::post('/forgot-password/verify', [PublicVerificationController::class, 'verifyOTP']);
 });
 
+Route::post('/notifications/send', [NotificationController::class, 'sendNotification']);
 
 
 Route::post('/login', function (Request $request) {
