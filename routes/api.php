@@ -171,10 +171,14 @@ Route::post('/register', function (Request $request) {
         'role' => $validated['role'],
     ]);
 
-    WorkerProfile::updateOrCreate(
-        ['UserID' => $user->id],
-        ['email' => 1]
-    );
+     $user->syncRoles([$validated['role']]);
+
+    if($validated['role'] == 'skilled_worker'){
+        WorkerProfile::updateOrCreate(
+            ['UserID' => $user->id],
+            ['email' => 1]
+        );
+    }
 
     return response()->json([
         'token' => $user->createToken('mobile')->plainTextToken,

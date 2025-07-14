@@ -66,19 +66,19 @@ class User extends Authenticatable
         return null;
     }
 
+    public function info()
+    {
+        return $this->role === 'homeowner'
+            ? $this->hasOne(Homeowner::class, 'user_id')
+            : $this->hasOne(Workers::class, 'UserID');
+    }
+
     public function profile(){
         return $this->hasOne(WorkerProfile::class, 'UserID');
     }
 
     public function earnings(){
         return $this->hasMany(Payment::class, 'user_id', 'id');
-    }
-
-    public function info()
-    {
-        return $this->role === 'homeowner'
-            ? $this->hasOne(Homeowner::class, 'user_id')
-            : $this->hasOne(Workers::class, 'UserID');
     }
 
     public function jobs(){
