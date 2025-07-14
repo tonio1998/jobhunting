@@ -93,6 +93,51 @@ class NotificationController extends Controller
         return response()->json(['message' => 'Notifications sent successfully.']);
     }
 
+    public function sendNotification2($UserID, $title, $body, $screen = null, $extra_data = null)
+    {
+        if ($UserID === 'all') {
+            $tokens = User::whereNotNull('fcm_token')
+                ->where('role', 'skilled_worker')
+                ->pluck('fcm_token')
+                ->toArray();
+
+            if (empty($tokens)) {
+                return response()->json(['message' => 'No device tokens found'], 404);
+            }
+        } else {
+            $user = User::findOrFail($UserID);
+
+            if (!$user->fcm_token) {
+                return response()->json(['message' => 'No device token found for this user'], 404);
+            }
+
+            $tokens = [$user->fcm_token];
+        }
+
+        $data = [];
+
+        if (isset($screen)) {
+            $data['screen'] = $screen;
+        }
+
+        if (isset($extra_data) && is_array($extra_data)) {
+            $data = array_merge($data, $extra_data);
+        }
+
+        $fcm = new FCMServiceV1();
+
+        foreach ($tokens as $token) {
+            $fcm->sendToDevice(
+                $token,
+                $title,
+                $body,
+                $data
+            );
+        }
+
+        return response()->json(['message' => 'Notifications sent successfully.']);
+    }
+
 
 
 

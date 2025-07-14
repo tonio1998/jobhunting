@@ -80,6 +80,12 @@ class JobsController extends Controller
             }
         }
 
+        $extraData = [
+            'id' => $class->id,
+        ];
+
+        (new NotificationController)->sendNotification2('all', $validated['title'] .'-'.$validated['rate_type'].'-'.$validated['rate_amount'], $validated['description'], 'ApplyForm', $extraData);
+
         return response()->json($class, 201);
     }
 

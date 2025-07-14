@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
+use App\Models\Contracts;
+use App\Models\ContractsDetails;
 use App\Models\Jobs;
 use App\Models\Review;
 use App\Models\SkilledWorker;
@@ -17,6 +19,57 @@ class BidsController extends Controller
     public function index()
     {
         return Bid::with(['skilledWorker', 'job'])->orderBy('created_at', 'desc')->get();
+    }
+
+    public function contracts($id)
+    {
+        $bid = Bid::find($id);
+        if(!$bid){
+            return response()->json(['message' => 'Bid not found'], 404);
+        }
+
+        $contracts = Contracts::with(['details'])->where('BidID', $bid->id)
+            ->whereHas('details', function ($query) {
+                $query->where('UserID', Auth::id());
+            })
+            ->first();
+        return response()->json($contracts);
+    }
+
+    public function signContract(Request $request)
+    {
+         $validated = $request->validate([
+            'BidID' => 'required|numeric',
+             'method' => 'required|string',
+        ]);
+
+        $bid = Bid::find($validated['BidID']);
+        if(!$bid){
+            return response()->json(['message' => 'Bid not found'], 404);
+        }
+
+        $contract = Contracts::where('BidID', $bid->id)->first();
+        if(!$contract){
+            $contract = new Contracts();
+            $contract->BidID = $bid->id;
+            $contract->JobID = $bid->job_id;
+            $this->setCommonFields($contract);
+            $contract->save();
+        }
+
+        $existContractDetails = ContractsDetails::where('ContractID', $contract->id)
+            ->where('UserID', Auth::id())
+            ->first();
+        if(!$existContractDetails){
+            $contractDetails = new ContractsDetails();
+            $contractDetails->ContractID = $contract->id;
+            $contractDetails->UserID = Auth::id();
+            $contractDetails->method = $request->method;
+            $this->setCommonFields($contractDetails);
+            $contractDetails->save();
+        }
+
+        return response()->json($bid);
     }
 
     public function submitReview(Request $request)
@@ -56,8 +109,10 @@ class BidsController extends Controller
 
         $skilledWorker->save();
 
-
-
+        (new NotificationController)->sendNotification2(
+            $validated['reviewee_id'],
+            'Your employer made a review for your task',
+            'Your employer has reviewed your task and gave you a rating of '.$validated['rating'].'.');
         return response()->json($review);
     }
 
@@ -78,7 +133,7 @@ class BidsController extends Controller
             default => "Your application status has been updated to: $NewStatus.",
         };
 
-        $message = Chats::create([
+        Chats::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $cc->UserID,
             'from' => 'auto',
@@ -86,6 +141,16 @@ class BidsController extends Controller
             'attachment_url' => null,
             'attachment_type' => null,
         ]);
+
+        $jobInfo = Jobs::find($cc->job_id);
+
+        (new NotificationController)->sendNotification2(
+            $cc->UserID,
+            'Application Status',
+            $autoMessage,
+            'ApplicationDetails',
+            ['id' => $jobInfo->id]
+        );
     }
 
     public function workersBids(Request $request)
@@ -139,6 +204,16 @@ class BidsController extends Controller
         $class->proposed_duration = $request->proposed_duration;
         $this->setCommonFields($class);
         $class->save();
+
+        $jobInfo = Jobs::find($request->job_id);
+
+        (new NotificationController)->sendNotification2(
+            $jobInfo->homeowner_id,
+            'Job Application',
+            'Hello, someone has applied for the job '.$jobInfo->title.'. Please check the application details.',
+            'ShowJob',
+            ['id' => $jobInfo->id]
+        );
 
         return response()->json($class, 201);
     }

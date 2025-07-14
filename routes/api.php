@@ -66,6 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('jobs/workers/{id}', [BidsController::class, 'workersBidsApplications'])->name('workers-bids-applications');
         Route::put('status/{BidID}/{newStatus}', [BidsController::class, 'newStatus']);
         Route::post('reviews', [BidsController::class, 'submitReview']);
+
+        Route::post('contracts/sign', [BidsController::class, 'signContract'])->name('sign-contract');
+        Route::get('contracts/{id}', [BidsController::class, 'contracts'])->name('contracts');
     });
 
     Route::prefix('user')->name('user.')->group(function () {
@@ -130,7 +133,6 @@ Route::prefix('verify')->name('verify.')->group(function () {
 
 Route::post('/notifications/send', [NotificationController::class, 'sendNotification']);
 
-
 Route::post('/login', function (Request $request) {
     $validator = Validator::make($request->all(), [
         'email' => 'required|string',
@@ -138,23 +140,34 @@ Route::post('/login', function (Request $request) {
     ]);
 
     if ($validator->fails()) {
-        return response()->json(['message' => 'Invalid input', 'errors' => $validator->errors()], 422);
+        return response()->json([
+            'message' => 'Invalid input',
+            'errors' => $validator->errors(),
+        ], 422);
     }
 
     $user = User::with(['skills.skill', 'info'])
-        ->where('email', $request->email)
-        ->orWhere('phone_number', $request->email)
+        ->where(function ($query) use ($request) {
+            $query->where('email', $request->email)
+                ->orWhere('phone_number', $request->email);
+        })
         ->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 401);
     }
 
+    if (!Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Incorrect password'], 401);
+    }
+
+    // Successful login
     return response()->json([
         'token' => $user->createToken('mobile')->plainTextToken,
         'user' => $user,
     ]);
 });
+
 
 Route::post('/register', function (Request $request) {
     $validated = $request->validate([
@@ -219,7 +232,7 @@ Route::post('/auth/google', function (Request $request) {
         $user = new User();
         $user->email = $email;
         $user->name = $name;
-        $user->password = bcrypt(Str::random(24));
+        $user->password = Hash::make($request->email);
         $user->avatar = $request->input('photo');
         $user->save();
     }
