@@ -262,6 +262,8 @@ class UserController extends Controller
         }
 
         $user->syncRoles([$request->role]);
+        $user->role = $request->role;
+        $user->save();
 
         return response()->json(['message' => 'Role updated successfully']);
     }
