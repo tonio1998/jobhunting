@@ -26,25 +26,40 @@ class FCMServiceV1
         return $client->fetchAccessTokenWithAssertion()['access_token'];
     }
 
-    public function sendToDevice(string $deviceToken, string $title, string $body): array
+    public function sendToDevice(string $deviceToken, string $title, string $body, array $data = []): array
     {
         $accessToken = $this->getAccessToken();
 
+        $stringData = [];
+        foreach ($data as $key => $value) {
+            $stringData[$key] = (string) $value;
+        }
+
+        $message = [
+            'message' => [
+                'token' => $deviceToken,
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body,
+                ],
+                'android' => [
+                    'priority' => 'HIGH',
+                ],
+            ],
+        ];
+
+        if (!empty($stringData)) {
+            $message['message']['data'] = $stringData;
+        }
+
         $response = Http::withToken($accessToken)->post(
             "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send",
-            [
-                'message' => [
-                    'token' => $deviceToken,
-                    'notification' => [
-                        'title' => $title,
-                        'body' => $body,
-                    ],
-                ],
-            ]
+            $message
         );
 
         return $response->json();
     }
+
 
     public function sendFCMRequest(array $payload)
     {

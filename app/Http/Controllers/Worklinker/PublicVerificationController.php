@@ -7,7 +7,9 @@ use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class PublicVerificationController extends Controller
 {
@@ -82,15 +84,30 @@ class PublicVerificationController extends Controller
         $record = Otp::where('phone', $request->phone)->where('otp', $request->otp)->first();
 
         if ($record  && strtotime($record->expires_at) > strtotime(now())) {
-            $user = User::where('id', Auth::id())->first();
+            $user = User::where('phone_number', $request->phone)->first();
+            $password = rand(100000, 999999);
             if($request->type === 'forgot-password'){
                 if($user){
-                    $user->update([
-                        'password' => bcrypt($request->otp),
-                    ]);
+                    $user->password = Hash::make($password);
+                    $user->save();
                 }
                 $record->delete();
-                return response()->json(['success' => true]);
+
+                $response = app()->environment('local')
+                    ? Http::withOptions([
+                        'verify' => 'C:/wamp64/bin/php/php8.2.23/extras/ssl/cacert.pem',
+                    ])->post('https://api.semaphore.co/api/v4/messages', [
+                        'apikey'  => env('SEMAPHORE_API_KEY'),
+                        'number'  => $request->phone,
+                        'message' => 'Your password has been changed. Your new password is '.$password,
+                    ])
+                    : Http::post('https://api.semaphore.co/api/v4/messages', [
+                        'apikey'  => env('SEMAPHORE_API_KEY'),
+                        'number'  => $request->phone,
+                        'message' => 'Your password has been changed. Your new password is '.$password,
+                    ]);
+
+                return response()->json(['success' => true, 'message' => 'Your password has been changed. Your new password is: '.$password]);
             }
 
             if($request->type === 'change-number'){

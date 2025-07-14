@@ -25,7 +25,7 @@ class ChatController extends Controller
             ->unique(function ($item) {
                 $pair = [$item->sender_id, $item->receiver_id];
                 sort($pair);
-                return implode('-', $pair); // Unique conversation pair
+                return implode('-', $pair);
             })
             ->values();
 
@@ -37,10 +37,11 @@ class ChatController extends Controller
 
             $unreadCount = Chats::where('sender_id', $otherUserId)
                 ->where('receiver_id', $userId)
-                ->where('is_read', false)
+                ->where('is_read', 0)
                 ->count();
 
             return [
+                'receiver_id' => $chat->receiver_id,
                 'chat_id' => $chat->id,
                 'last_message' => $chat->message,
                 'timestamp' => $chat->created_at,
@@ -90,9 +91,20 @@ class ChatController extends Controller
             'attachment_type' => $validateData['attachment_type'] ?? null,
         ]);
 
-//        event(new MessageSent($message));
+        $user = User::find($message->sender_id);
 
-        broadcast(new MessageSent($message));
+        (new NotificationController)->sendNotification2(
+            $message->receiver_id,
+            $user->name,
+            $message->message,
+            'ChatDetails',
+            [
+                'senderId' => $message->sender_id,
+                'receiverId' => $message->receiver_id,
+                'chatId' => $message->receiver_id,
+                'user' => $user,
+            ]
+        );
 
         return response()->json(['message' => 'Message sent.', 'data' => $message], 201);
     }
