@@ -36,6 +36,12 @@ class Jobs extends Model implements AuditableContract
         'archived' => 'boolean',
     ];
 
+    public function contract()
+    {
+        return $this->hasOne(Contracts::class, 'JobID', 'id');
+    }
+
+
     public function favorites()
     {
         return $this->belongsToMany(User::class, 'favjob', 'JobID', 'UserID');

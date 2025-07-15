@@ -67,6 +67,11 @@ class User extends Authenticatable
         return null;
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'reviewee_id');
+    }
+
     public function profile(){
         return $this->hasOne(WorkerProfile::class, 'UserID');
     }

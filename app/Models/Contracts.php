@@ -26,4 +26,15 @@ class Contracts extends Model
     {
         return $this->hasMany(ContractsDetails::class, 'ContractID');
     }
+
+    public function job()
+    {
+        return $this->belongsTo(Jobs::class, 'JobID');
+    }
+
+    public function bid()
+    {
+        return $this->belongsTo(Bid::class, 'BidID');
+    }
+
 }

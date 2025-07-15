@@ -7,12 +7,16 @@ use App\Models\Bid;
 use App\Models\Contracts;
 use App\Models\ContractsDetails;
 use App\Models\Jobs;
+use App\Models\Otp;
 use App\Models\Review;
 use App\Models\SkilledWorker;
+use App\Models\User;
 use App\Traits\TCommonFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Chats;
+use Illuminate\Support\Facades\Http;
+
 class BidsController extends Controller
 {
     use TCommonFunctions;
@@ -21,53 +25,148 @@ class BidsController extends Controller
         return Bid::with(['skilledWorker', 'job'])->orderBy('created_at', 'desc')->get();
     }
 
-    public function contracts($id)
+    public function verifySmsCode(Request $request)
     {
-        $bid = Bid::find($id);
-        if(!$bid){
-            return response()->json(['message' => 'Bid not found'], 404);
+        $validated = $request->validate([
+            'code' => 'required|numeric',
+            'userId' => 'required|numeric',
+            'contractId' => 'required|numeric',
+            'bidId' => 'required|numeric',
+            'jobId' => 'required|numeric',
+        ]);
+
+        $user = User::find($validated['userId']);
+        $contract = Contracts::with(['bid'])->find($validated['contractId']);
+        $job = Jobs::find($validated['jobId']);
+
+        $otpRecord = Otp::where('phone', $user->phone_number)
+            ->where('otp', $validated['code'])
+            ->where('type', 'contract')
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$otpRecord) {
+            return response()->json(['message' => 'Invalid code']);
         }
 
-        $contracts = Contracts::with(['details'])->where('BidID', $bid->id)
-            ->whereHas('details', function ($query) {
-                $query->where('UserID', Auth::id());
-            })
-            ->first();
-        return response()->json($contracts);
+        $new = new ContractsDetails();
+        $new->ContractID = $contract->id;
+        $new->BidID = $request->bidId;
+        $new->UserID = $user->id ?? 0;
+        $new->method = 'sms';
+        $new->otp = $request->input('code');
+        $this->setCommonFields($new);
+        $new->save();
+
+        $otpRecord->delete();
+
+        return response()->json(['message' => 'Contract signed successfully']);
     }
+
+    public function sendSmsCode(Request $request)
+    {
+        $validated = $request->validate([
+            'userId' => 'required|numeric',
+            'contractId' => 'required|numeric',
+            'jobId' => 'required|numeric',
+        ]);
+
+        $user = User::find($validated['userId']);
+
+        $otp = rand(100000, 999999);
+        $message = "You are about to sign the contract with SMS. Your OTP is $otp. If you did not request this, please ignore this message.";
+
+        $otpRecord = new Otp();
+        $otpRecord->phone = $user->phone_number;
+        $otpRecord->otp = $otp;
+        $otpRecord->expires_at = now()->addMinutes(10);
+        $otpRecord->type = 'contract';
+        $otpRecord->created_by = 0;
+        $otpRecord->updated_by = 0;
+        $otpRecord->status = 'active';
+        $otpRecord->archived = 0;
+        $otpRecord->created_at = now();
+        $otpRecord->updated_at = now();
+        $otpRecord->save();
+
+        $response = app()->environment('local')
+            ? Http::withOptions([
+                'verify' => 'C:/wamp64/bin/php/php8.2.23/extras/ssl/cacert.pem',
+            ])->post('https://api.semaphore.co/api/v4/messages', [
+                'apikey'  => env('SEMAPHORE_API_KEY'),
+                'number'  => $user->phone_number,
+                'message' => $message,
+            ])
+            : Http::post('https://api.semaphore.co/api/v4/messages', [
+                'apikey'  => env('SEMAPHORE_API_KEY'),
+                'number'  => $user->phone_number,
+                'message' => $message,
+            ]);
+
+        if ($response->successful()) {
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['message' => 'SMS code sent successfully']);
+    }
+
+    public function contracts($id)
+    {
+        $contract = Contracts::with(['details.user', 'job.homeowner', 'details.bid', 'job.applicants'])
+            ->where('id', $id)
+            ->first();
+
+        if (!$contract) {
+            return response()->json(['message' => 'Contract not found or access denied'], 404);
+        }
+
+        return response()->json($contract);
+    }
+
 
     public function signContract(Request $request)
     {
          $validated = $request->validate([
-            'BidID' => 'required|numeric',
+            'JobID' => 'required|numeric',
+             'BidID' => 'nullable|numeric',
+             'ContractID' => 'required|numeric',
              'method' => 'required|string',
         ]);
 
-        $bid = Bid::find($validated['BidID']);
-        if(!$bid){
-            return response()->json(['message' => 'Bid not found'], 404);
+        $job = Jobs::find($validated['JobID']);
+        $bid = Bid::find($validated['BidID'] ?? 0);
+        if(!$job){
+            return response()->json(['message' => 'Job not found'], 404);
         }
 
-        $contract = Contracts::where('BidID', $bid->id)->first();
-        if(!$contract){
-            $contract = new Contracts();
-            $contract->BidID = $bid->id;
-            $contract->JobID = $bid->job_id;
-            $this->setCommonFields($contract);
-            $contract->save();
-        }
-
-        $existContractDetails = ContractsDetails::where('ContractID', $contract->id)
+        $existContractDetails = ContractsDetails::where('ContractID', $request->ContractID)
+            ->where('BidID', $bid->id)
             ->where('UserID', Auth::id())
             ->first();
         if(!$existContractDetails){
             $contractDetails = new ContractsDetails();
-            $contractDetails->ContractID = $contract->id;
+            $contractDetails->ContractID = $request->ContractID;
+            $contractDetails->BidID = $bid->id;
             $contractDetails->UserID = Auth::id();
             $contractDetails->method = $request->method;
             $this->setCommonFields($contractDetails);
             $contractDetails->save();
         }
+
+        $extraData = [
+            'id' => $request->ContractID,
+            'BidID' => $bid->id,
+            'jobId' => $job->id,
+            'UserID' => $bid->UserID,
+        ];
+
+        (new NotificationController)->sendNotification2(
+            $bid->UserID,
+            'Service Contract Agreement',
+            'Good news! Your service contract has been signed',
+            'ContractScreen',
+            $extraData
+        );
 
         return response()->json($bid);
     }
@@ -160,24 +259,32 @@ class BidsController extends Controller
 
     public function workersBidsApplications($id)
     {
-        $cc = Bid::find($id);
-        $posted = Jobs::find($cc->job_id);
-        if(is_null($cc->ApplicationStatus) && Auth::id() === $posted->homeowner_id){
-            $cc->ApplicationStatus = "The employee has seen your application.";
-            $cc->save();
+        $bid = Bid::with([
+            'details.info',
+            'job.skills_required.skill',
+            'job.contract.details'
+        ])->findOrFail($id);
 
-            $message = Chats::create([
+        $job = $bid->job;
+
+        if (is_null($bid->ApplicationStatus) && Auth::id() === $job->homeowner_id) {
+            $bid->update([
+                'ApplicationStatus' => 'The employer has seen your application.'
+            ]);
+
+            Chats::create([
                 'sender_id' => Auth::id(),
-                'receiver_id' => $cc->UserID,
+                'receiver_id' => $bid->UserID,
                 'from' => 'auto',
-                'message' => 'The employee has seen your application.',
+                'message' => 'The employer has seen your application.',
                 'attachment_url' => null,
                 'attachment_type' => null,
             ]);
         }
 
-        return Bid::with(['details.info', 'job.skills_required.skill'])->where('id', $id)->orderBy('created_at', 'desc')->first();
+        return $bid;
     }
+
 
     public function withdrawBid($id)
     {
