@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
+use App\Models\Contracts;
 use App\Models\JobFavorite;
 use App\Models\Jobs;
 use App\Models\JobSkill;
@@ -69,6 +70,11 @@ class JobsController extends Controller
         $class->placeOfAssignmentText = $validated['placeOfAssignmentText'] ?? null;
         $this->setCommonFields($class);
         $class->save();
+
+        $contract = new Contracts();
+        $contract->JobID = $class->id;
+        $this->setCommonFields($contract);
+        $contract->save();
 
         if(count($validated['selectedSkills']) > 0){
             foreach ($request->selectedSkills as $skill) {

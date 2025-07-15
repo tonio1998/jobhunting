@@ -69,6 +69,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('contracts/sign', [BidsController::class, 'signContract'])->name('sign-contract');
         Route::get('contracts/{id}', [BidsController::class, 'contracts'])->name('contracts');
+        Route::post('contracts/sms-code', [BidsController::class, 'sendSmsCode'])->name('send-sms-code');
+        Route::post('contracts/sms-code/verify', [BidsController::class, 'verifySmsCode'])->name('verify-sms-code');
     });
 
     Route::prefix('user')->name('user.')->group(function () {

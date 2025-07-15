@@ -11,7 +11,7 @@ class Bid extends Model implements AuditableContract
 {
     use SoftDeletes;
     use Auditable;
-    
+
     protected $table = 'bids';
     public $timestamps = true;
 
@@ -20,6 +20,7 @@ class Bid extends Model implements AuditableContract
         'skilled_worker_id',
         'price',
         'description',
+        'total_pay',
         'created_by',
         'updated_by',
         'status',
@@ -36,6 +37,7 @@ class Bid extends Model implements AuditableContract
     {
         return $this->belongsTo(Jobs::class, 'job_id');
     }
+
 
     public function skilledWorker()
     {
