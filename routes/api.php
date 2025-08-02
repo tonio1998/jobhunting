@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/role', [UserController::class, 'updateRole']);
         Route::get('/{id}/favorites', [UserController::class, 'getFavorites']);
         Route::post('/save-fcm-token', [UserController::class, 'saveFcmToken']);
+        Route::delete('/{id}', [UserController::class, 'deleteAccount']);
     });
 
     Route::prefix('chats')->name('chats.')->group(function () {

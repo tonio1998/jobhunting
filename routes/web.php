@@ -1,7 +1,14 @@
 <?php
 
 use App\Http\Controllers\Worklinker\DashboardController;
+use App\Http\Controllers\Worklinker\PublicVerificationController;
 use App\Http\Controllers\Worklinker\WorkersController;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Worklinker\UsersController;
@@ -57,6 +64,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 });
+
+Route::get('/delete-account', [PublicVerificationController::class, 'deleteAccount'])->name('delete-account');
+Route::post('/request-delete-otp', [PublicVerificationController::class, 'deleteRequestAccount'])->name('request-delete-otp');
+Route::get('/verify-delete-otp', [PublicVerificationController::class, 'verifyOtpS'])->name('verify-delete-otp');
+Route::post('/verify-otp', [PublicVerificationController::class, 'verifyOTPAccount'])->name('verify-otp');
+
 
 
 require __DIR__.'/settings.php';
