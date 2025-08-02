@@ -13,7 +13,7 @@ class FCMServiceV1
     public function __construct()
     {
         $this->projectId = env('FIREBASE_PROJECT_ID');
-        $this->credentialsPath = storage_path('app/firebase/worklinker-6de71-firebase-adminsdk-fbsvc-286cc08a0c.json');
+        $this->credentialsPath = storage_path('app/firebase/worklinker-6de71-firebase-adminsdk-fbsvc-f9b87c70fc.json');
     }
 
     protected function getAccessToken(): string
