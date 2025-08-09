@@ -1,21 +1,18 @@
 <?php
 
-use App\Http\Controllers\Worklinker\DashboardController;
-use App\Http\Controllers\Worklinker\PublicVerificationController;
-use App\Http\Controllers\Worklinker\WorkersController;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Request;
+
+use App\Http\Controllers\HomeownerController;
+use App\Http\Controllers\JobsController;
+use App\Http\Controllers\PublicVerificationController;
+use App\Http\Controllers\WorkersController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UserPermissionController;
+use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Worklinker\UsersController;
-use App\Http\Controllers\Worklinker\RolesController;
-use App\Http\Controllers\Worklinker\PermissionController;
-use App\Http\Controllers\Worklinker\UserPermissionController;
-use App\Http\Controllers\Worklinker\UserRoleController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -28,7 +25,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UsersController::class, 'index'])->name('index');
-
         Route::get('/{user}/roles', [UserRoleController::class, 'edit'])->name('roles.edit');
         Route::put('{user}/roles', [UserRoleController::class, 'update'])->name('roles.update');
         Route::get('/{user}/permissions', [UserPermissionController::class, 'edit'])->name('permissions.edit');
@@ -60,6 +56,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('workers')->name('workers.')->group(function () {
         Route::get('/', [WorkersController::class, 'index'])->name('index');
+        Route::get('/fetch', [WorkersController::class, 'fetch'])->name('fetch');
+    });
+
+    Route::prefix('homeowners')->name('homeowners.')->group(function () {
+        Route::get('/', [HomeownerController::class, 'index'])->name('index');
+        Route::get('/fetch', [HomeownerController::class, 'fetch'])->name('fetch');
+    });
+
+    Route::prefix('job')->name('job.')->group(function () {
+        Route::get('/', [JobsController::class, 'index'])->name('index');
+        Route::get('/fetch/{id}', [JobsController::class, 'fetchJobDetails'])->name('fetchJobDetails');
+        Route::get('/apply/{id}', [JobsController::class, 'showApplication'])->name('showApplication');
+        Route::get('/fetch', [JobsController::class, 'fetch'])->name('fetch');
     });
 
 

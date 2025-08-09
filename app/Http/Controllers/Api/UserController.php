@@ -231,16 +231,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function deleteAccount(Request $request)
-    {
-        $user = User::find(Auth::id());
-        $user->delete();
-        return response()->json([
-            'message' => 'Account deleted successfully',
-            'status' => 'success',
-        ]);
-    }
-
     public function saveFcmToken(Request $request)
     {
         $token = $request->input('token');

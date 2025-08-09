@@ -4,6 +4,15 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\Bid;
+use App\Models\Contracts;
+use App\Models\ContractsDetails;
+use App\Models\JobFavorite;
+use App\Models\JobRequirementsSubmission;
+use App\Models\Jobs;
+use App\Models\SkilledWorker;
+use App\Models\WorkerAttachments;
+use App\Models\WorkerProfile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -50,6 +59,16 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        Bid::where('UserID', $user->id)->delete();
+        Jobs::where('homeowner_id', $user->id)->delete();
+        WorkerProfile::where('UserID', $user->id)->delete();
+        WorkerAttachments::where('UserID', $user->id)->delete();
+        JobRequirementsSubmission::where('UserID', $user->id)->delete();
+        JobFavorite::where('UserID', $user->id)->delete();
+        SkilledWorker::where('user_id', $user->id)->delete();
+        Contracts::where('UserID', $user->id)->delete();
+        ContractsDetails::where('UserID', $user->id)->delete();
 
         Auth::logout();
 

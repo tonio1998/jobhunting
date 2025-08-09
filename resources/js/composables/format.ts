@@ -7,6 +7,15 @@ export function formatPeso(amount: number | string): string {
   }).format(num);
 }
 
+export function formatNumber(amount: number | string): string {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return new Intl.NumberFormat('en-PH', {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(num);
+}
+
 
 export function getFileSize(size: number) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -29,7 +38,7 @@ export const getAddressFromCoords = async (latitude, longitude) => {
         }
     );
     const data = await response.json();
-    
+
     if (data && data.display_name) {
       return data.display_name; // Full formatted address
     } else {
