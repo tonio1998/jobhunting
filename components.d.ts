@@ -15,5 +15,7 @@ declare module 'vue' {
     IconHeroiconsOutlinePaperAirplane: typeof import('~icons/heroicons-outline/paper-airplane')['default']
     IconHeroiconsOutlinePencilSquare: typeof import('~icons/heroicons-outline/pencil-square')['default']
     IconHeroiconsOutlineTrash: typeof import('~icons/heroicons-outline/trash')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
   }
 }

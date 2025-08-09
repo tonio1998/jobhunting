@@ -66,48 +66,67 @@ const breadcrumbs: any[] = [
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="user in users.data" :key="user.id">
-                            <td class="space-x-2">
-                                <ClickableDropdown
-                                    :items="[
-                                        { label: 'Roles', href: `/users/${user.id}/roles`, icon: UserGroupIcon },
-                                        { label: 'Permission', href: `/users/${user.id}/permissions`, icon: KeyIcon },
-                                      ]"
-                                />
-                            </td>
-                            <td>
-                                <div class="flex items-center gap-3">
-                                    <div class="avatar">
-                                        <div class="mask mask-squircle w-10 h-10">
-                                            <img
+                    <tr v-for="user in users.data" :key="user.id">
+                        <td class="space-x-2">
+                            <ClickableDropdown
+                                :items="[
+          { label: 'Roles', href: `/users/${user.id}/roles`, icon: UserGroupIcon },
+          { label: 'Permission', href: `/users/${user.id}/permissions`, icon: KeyIcon },
+        ]"
+                            />
+                        </td>
+
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar">
+                                    <div class="mask mask-squircle w-10 h-10">
+                                        <img
                                             :src="user.avatar || user.profile_pic || '/images/launcher_icon.png'"
                                             @error="e => e.target.src = '/images/launcher_icon.png'"
                                             alt="Avatar"
-                                            />
-
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold uppercase">{{ user.name }}</div>
-                                        <div>{{ user.email }}</div>
+                                        />
                                     </div>
                                 </div>
-                            </td>
-                            <td>{{ user.phone_number || '—' }}</td>
-                            <td>
-                            <span v-if="user.roles.length">
-                                {{ user.roles.map(role => role.name).join(', ') }}
-                            </span>
-                            <span v-else>--</span>
-                            </td>
+                                <div>
+                                    <div class="font-bold uppercase">{{ user.name }}</div>
+                                    <div>{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
 
-                            <td>{{ user.current_location || '--' }}</td>
-                            <td>{{ formatDate(user.created_at) }}</td>
-                        </tr>
-                        <tr v-if="users.data.length === 0">
-                            <td colspan="5" class="text-center text-gray-500 py-4">No users found.</td>
-                        </tr>
+                        <td>{{ user.phone_number || '—' }}</td>
+
+                        <td>
+                              <span v-if="user.roles.length">
+                                {{ user.roles.map(role => role.name).join(', ') }}
+                              </span>
+                            <span v-else>--</span>
+                        </td>
+
+                        <td>
+                            {{
+                                (() => {
+                                    let loc = user.current_location;
+                                    try {
+                                        if (typeof loc === 'string') loc = JSON.parse(loc);
+                                        return loc && loc.latitude && loc.longitude
+                                            ? `${loc.latitude}, ${loc.longitude}`
+                                            : '--';
+                                    } catch {
+                                        return '--';
+                                    }
+                                })()
+                            }}
+                        </td>
+
+                        <td>{{ formatDate(user.created_at) }}</td>
+                    </tr>
+
+                    <tr v-if="users.data.length === 0">
+                        <td colspan="6" class="text-center text-gray-500 py-4">No users found.</td>
+                    </tr>
                     </tbody>
+
                 </table>
             </div>
 

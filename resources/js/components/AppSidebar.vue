@@ -14,12 +14,18 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    // {
+    //     title: 'Homeowner Mngt.',
+    //     icon: LayoutGrid,
+    //     children: [
+    //         { title: 'All', href: '/homeowners' },
+    //     ],
+    // },
     {
-        title: 'Worker Management',
+        title: 'Worker Mngt.',
         icon: LayoutGrid,
         children: [
             { title: 'All', href: '/workers' },
-            { title: 'New', href: '/workers/create' },
         ],
     },
     {

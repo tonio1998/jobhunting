@@ -20,7 +20,7 @@
 
         <ul
             v-if="isOpen"
-            class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+            class="dropdown-content  menu bg-muted rounded-box z-10 w-52 p-2 shadow-sm"
         >
             <slot v-if="$slots.default" />
 
@@ -74,6 +74,9 @@ const toggleDropdown = () => {
 };
 
 const handleSelect = (item) => {
+    if (item.action && typeof item.action === 'function') {
+        item.action(); // 💥 This is the missing piece
+    }
     emit('select', item);
     isOpen.value = false;
 };

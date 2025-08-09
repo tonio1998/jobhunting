@@ -2,16 +2,16 @@
 
 use App\Http\Controllers\Api\BidsController;
 use App\Http\Controllers\Api\ChatController;
-use App\Http\Controllers\Api\JobsController;
+use App\Http\Controllers\Api\JobsApiController;
 use App\Http\Controllers\Api\RequirementController;
 use App\Http\Controllers\Api\SkillsController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Worklinker\PublicVerificationController;
-use App\Http\Controllers\Worklinker\PaymentController;
-use App\Http\Controllers\Worklinker\XenditController;
+use App\Http\Controllers\PublicVerificationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\XenditController;
 use App\Models\User;
 use App\Models\WorkerProfile;
 use Illuminate\Http\Request;
@@ -34,14 +34,14 @@ Route::middleware('auth:sanctum')->get('/user/profile', function (Request $reque
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('jobs')->name('jobs.')->group(function () {
-        Route::get('/', [JobsController::class, 'index'])->name('index');
-        Route::post('/', [JobsController::class, 'store'])->name('store');
-        Route::get('{id}', [JobsController::class, 'show'])->name('show');
-        Route::put('{id}', [JobsController::class, 'update'])->name('update');
-        Route::delete('{id}', [JobsController::class, 'destroy'])->name('destroy');
-        Route::post('list', [JobsController::class, 'list'])->name('add-student');
-        Route::get('homeowner/{id}', [JobsController::class, 'homeownerJobs'])->name('homeowner-jobs');
-        Route::post('add-favorite', [JobsController::class, 'addFavorite'])->name('add-favorite');
+        Route::get('/', [JobsApiController::class, 'index'])->name('index');
+        Route::post('/', [JobsApiController::class, 'store'])->name('store');
+        Route::get('{id}', [JobsApiController::class, 'show'])->name('show');
+        Route::put('{id}', [JobsApiController::class, 'update'])->name('update');
+        Route::delete('{id}', [JobsApiController::class, 'destroy'])->name('destroy');
+        Route::post('list', [JobsApiController::class, 'list'])->name('add-student');
+        Route::get('homeowner/{id}', [JobsApiController::class, 'homeownerJobs'])->name('homeowner-jobs');
+        Route::post('add-favorite', [JobsApiController::class, 'addFavorite'])->name('add-favorite');
     });
 
     Route::prefix('skills')->name('skills.')->group(function () {
@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('user')->name('user.')->group(function () {
+        Route::get('delete-account', [UserController::class, 'deleteAccount'])->name('delete-account');
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::get('{id}', [UserController::class, 'show'])->name('show');
