@@ -256,6 +256,8 @@ class UserController extends Controller
         ]);
 
         $user = User::find(Auth::id());
+        $user->role = $request->role;
+        $user->save();
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
