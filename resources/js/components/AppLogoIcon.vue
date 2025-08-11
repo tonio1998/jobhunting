@@ -14,10 +14,10 @@ defineProps<Props>();
 
 <template>
     <img
-        src="/imgs/logo.png"
+        src="/images/launcher_icon.png"
         :class="className"
         v-bind="$attrs"
-        alt="Tubajon NHS Logo"
+        alt="Worklinker Logo"
     />
 
 </template>
