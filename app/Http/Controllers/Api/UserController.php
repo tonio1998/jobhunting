@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contracts;
+use App\Models\ContractsDetails;
 use App\Models\JobFavorite;
 use App\Models\JobRequirementsSubmission;
+use App\Models\Jobs;
 use App\Models\Requirement;
 use App\Models\WorkerAttachments;
 use App\Models\WorkerProfile;
@@ -76,6 +79,44 @@ class UserController extends Controller
         $class->total_earnings = $class->earnings->sum('amount');
 
         return response()->json($class);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+//        dsdsd
+        $user = User::find(Auth::id());
+        $user->delete();
+
+        $job = Jobs::where('homeowner_id', Auth::id())->get();
+        if($job){
+            $job->delete();
+        }
+
+        $attachment = WorkerAttachments::where('UserID', Auth::id())->get();
+        if($attachment){
+            $attachment->delete();
+        }
+
+        $profile = WorkerProfile::where('UserID', Auth::id())->get();
+        if($profile){
+            $profile->delete();
+        }
+
+        $skill = Workers::where('UserID', Auth::id())->get();
+        if($skill){
+            $skill->delete();
+        }
+
+        $contract = Contracts::where('created_by', Auth::id())->get();
+        if($contract){
+            $contract->delete();
+        }
+
+        $contract_details = ContractsDetails::where('created_by', Auth::id())->get();
+        if($contract_details){
+            $contract_details->delete();
+        }
+        return response()->json(['message' => 'Account deleted']);
     }
 
 
