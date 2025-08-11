@@ -83,41 +83,19 @@ class UserController extends Controller
 
     public function deleteAccount(Request $request)
     {
-//        dsdsd
-        $user = User::find(Auth::id());
-        $user->delete();
+        $userId = Auth::id();
 
-        $job = Jobs::where('homeowner_id', Auth::id())->get();
-        if($job){
-            $job->delete();
-        }
+        User::where('id', $userId)->delete();
+        Jobs::where('homeowner_id', $userId)->delete();
+        WorkerAttachments::where('UserID', $userId)->delete();
+        WorkerProfile::where('UserID', $userId)->delete();
+        Workers::where('UserID', $userId)->delete();
+        Contracts::where('created_by', $userId)->delete();
+        ContractsDetails::where('created_by', $userId)->delete();
 
-        $attachment = WorkerAttachments::where('UserID', Auth::id())->get();
-        if($attachment){
-            $attachment->delete();
-        }
-
-        $profile = WorkerProfile::where('UserID', Auth::id())->get();
-        if($profile){
-            $profile->delete();
-        }
-
-        $skill = Workers::where('UserID', Auth::id())->get();
-        if($skill){
-            $skill->delete();
-        }
-
-        $contract = Contracts::where('created_by', Auth::id())->get();
-        if($contract){
-            $contract->delete();
-        }
-
-        $contract_details = ContractsDetails::where('created_by', Auth::id())->get();
-        if($contract_details){
-            $contract_details->delete();
-        }
         return response()->json(['message' => 'Account deleted']);
     }
+
 
 
     public function deleteUserFile($id){
