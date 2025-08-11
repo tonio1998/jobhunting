@@ -9,7 +9,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             <div class="text-lg font-bold">{{ appName }}</div>
             <nav class="flex gap-4 text-sm">
                 <Link :href="route('job.index')" class="hover:underline">Find Jobs</Link>
-                <Link href="#" class="hover:underline">About</Link>
+                <Link href="/privacy" class="hover:underline">Privacy</Link>
                 <Link v-if="$page.props.auth?.user" :href="route('dashboard.index')">
                     Dashboard
                 </Link>

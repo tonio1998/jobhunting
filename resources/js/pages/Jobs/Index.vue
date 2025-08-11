@@ -63,9 +63,8 @@ onMounted(fetchJobs);
                 <h1 class="text-3xl font-extrabold tracking-wide">Job Openings</h1>
                 <nav class="space-x-6 text-sm font-medium flex items-center">
                     <Link href="/" class="hover:underline">Home</Link>
-                    <Link href="/job" class="text-white underline decoration-white decoration-2 rounded px-2 py-1">
-                        Jobs
-                    </Link>
+                    <Link href="/privacy" class="text-white underline decoration-white decoration-2 rounded px-2 py-1">Privacy</Link>
+                    <Link href="/job" class="text-white underline decoration-white decoration-2 rounded px-2 py-1">Jobs</Link>
                 </nav>
             </div>
         </header>
