@@ -83,7 +83,7 @@ class UserController extends Controller
 
     public function deleteAccount(Request $request)
     {
-        $userId = Auth::id();
+        $userId = Auth::user()->id;
 
         User::where('id', $userId)->delete();
         Jobs::where('homeowner_id', $userId)->delete();
