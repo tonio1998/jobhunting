@@ -105,6 +105,12 @@ class PublicVerificationController extends Controller
 
         return response()->json(['message' => 'Account deleted successfully.']);
     }
+
+    public function privacy()
+    {
+        return Inertia::render('Privacy/statement');
+    }
+
     public function deleteAccount(Request $request)
     {
         return Inertia::render('DeleteAccount');

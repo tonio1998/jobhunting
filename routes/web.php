@@ -79,7 +79,7 @@ Route::post('/request-delete-otp', [PublicVerificationController::class, 'delete
 Route::get('/verify-delete-otp', [PublicVerificationController::class, 'verifyOtpS'])->name('verify-delete-otp');
 Route::post('/verify-otp', [PublicVerificationController::class, 'verifyOTPAccount'])->name('verify-otp');
 
-
+Route::get('/privacy', [PublicVerificationController::class, 'privacy'])->name('Privacy');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
