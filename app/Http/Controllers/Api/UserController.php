@@ -85,13 +85,14 @@ class UserController extends Controller
     {
         $userId = Auth::user()->id;
 
-        User::where('id', $userId)->delete();
-        Jobs::where('homeowner_id', $userId)->delete();
-        WorkerAttachments::where('UserID', $userId)->delete();
-        WorkerProfile::where('UserID', $userId)->delete();
-        Workers::where('UserID', $userId)->delete();
-        Contracts::where('created_by', $userId)->delete();
-        ContractsDetails::where('created_by', $userId)->delete();
+        User::where('id', $userId)->forceDelete();
+        Jobs::where('homeowner_id', $userId)->forceDelete();
+        WorkerAttachments::where('UserID', $userId)->forceDelete();
+        WorkerProfile::where('UserID', $userId)->forceDelete();
+        Workers::where('UserID', $userId)->forceDelete();
+        Contracts::where('created_by', $userId)->forceDelete();
+        ContractsDetails::where('created_by', $userId)->forceDelete();
+
 
         return response()->json(['message' => 'Account deleted']);
     }
