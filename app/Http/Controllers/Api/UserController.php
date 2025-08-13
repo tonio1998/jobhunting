@@ -68,7 +68,18 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $class = User::with(['info', 'skills.skill', 'files.fileDetails', 'rating', 'bids.job', 'jobs', 'profile', 'earnings', 'reviews.reviewer'])
+        $class = User::with([
+            'info',
+            'skills.skill',
+            'files.fileDetails',
+            'rating',
+            'bids.job',
+            'bids.requirements',
+            'jobs',
+            'profile',
+            'earnings',
+            'reviews.reviewer'
+        ])
             ->where('id', $id)
             ->first();
 
@@ -96,8 +107,6 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Account deleted']);
     }
-
-
 
     public function deleteUserFile($id){
         $file = WorkerAttachments::find($id);

@@ -17,13 +17,19 @@ class JobsApiController extends Controller
     use TCommonFunctions;
     public function index()
     {
-        return Jobs::with(['homeowner', 'applicants', 'skills_required.skill'])->orderBy('created_at', 'desc')->get();
+        return Jobs::with(['homeowner', 'applicants', 'skills_required.skill'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
     }
 
     public function homeownerJobs($id)
     {
-        return Jobs::with(['homeowner', 'skills_required.skill', 'applicants'])->where('homeowner_id', $id)->orderBy('created_at', 'desc')->get();
+        return Jobs::with(['homeowner', 'skills_required.skill', 'applicants'])
+            ->where('homeowner_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
     }
+
 
     public function addFavorite(Request $request)
     {
