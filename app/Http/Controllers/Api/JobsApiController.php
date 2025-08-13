@@ -24,7 +24,14 @@ class JobsApiController extends Controller
 
     public function homeownerJobs($id)
     {
-        return Jobs::with(['homeowner', 'skills_required.skill', 'applicants'])
+        return Jobs::with([
+            'homeowner',
+            'skills_required.skill',
+            'applicants' => function ($query) {
+                $query->whereHas('details')
+                ->with('details.info', 'job.skills_required.skill', 'job.contract.details');
+            },
+        ])
             ->where('homeowner_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
