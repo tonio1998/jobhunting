@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class FCMServiceV1
 {
-    protected string $projectId;
-    protected string $credentialsPath;
+    public string $projectId;
+    public string $credentialsPath;
 
     public function __construct()
     {
-        $this->projectId = env('FIREBASE_PROJECT_ID');
+        $this->projectId = env('FIREBASE_PROJECT_ID', '');
         $this->credentialsPath = storage_path('app/firebase/worklinker-6de71-firebase-adminsdk-fbsvc-f9b87c70fc.json');
     }
 
