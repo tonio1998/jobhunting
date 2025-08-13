@@ -8,8 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    IconHeroiconsOutlineCheck: typeof import('~icons/heroicons-outline/check')['default']
-    IconHeroiconsOutlineCheckCircle: typeof import('~icons/heroicons-outline/check-circle')['default']
     IconHeroiconsOutlineClipboardDocument: typeof import('~icons/heroicons-outline/clipboard-document')['default']
     IconHeroiconsOutlineKey: typeof import('~icons/heroicons-outline/key')['default']
     IconHeroiconsOutlinePaperAirplane: typeof import('~icons/heroicons-outline/paper-airplane')['default']

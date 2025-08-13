@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
+use PHPUnit\Metadata\Api\Requirements;
 
 class Bid extends Model implements AuditableContract
 {
@@ -38,6 +39,10 @@ class Bid extends Model implements AuditableContract
         return $this->belongsTo(Jobs::class, 'job_id');
     }
 
+    public function requirements()
+    {
+        return $this->hasMany(JobRequirementsSubmission::class, 'BidID');
+    }
 
     public function skilledWorker()
     {
