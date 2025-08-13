@@ -74,12 +74,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('user')->name('user.')->group(function () {
-        Route::get('delete-account', [UserController::class, 'deleteAccount'])->name('delete-account');
+//        Route::get('delete-account', [UserController::class, 'deleteAccount'])->name('delete-account');
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::get('{id}', [UserController::class, 'show'])->name('show');
         Route::put('{id}', [UserController::class, 'update'])->name('update');
-        Route::delete('{id}', [UserController::class, 'destroy'])->name('destroy');
+//        Route::delete('{id}', [UserController::class, 'destroy'])->name('destroy');
         Route::post('list', [UserController::class, 'list'])->name('add-student');
         Route::post('/{id}/{requirement_id}/upload', [UserController::class, 'uploadFile']);
         Route::get('/{id}/files', [UserController::class, 'getUserFiles']);
