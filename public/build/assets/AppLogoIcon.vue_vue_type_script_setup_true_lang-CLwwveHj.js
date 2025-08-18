@@ -1,1 +1,0 @@
-import{g as s,c as a,a as o,a5 as r}from"./app-SjD42TUq.js";const p=s({inheritAttrs:!1,__name:"AppLogoIcon",props:{className:{}},setup(n){return(e,c)=>(o(),a("img",r({src:"/images/launcher_icon.png",class:e.className},e.$attrs,{alt:"Worklinker Logo"}),null,16))}});export{p as _};
