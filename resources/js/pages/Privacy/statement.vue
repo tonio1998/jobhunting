@@ -1,13 +1,13 @@
 <script setup lang="ts">
-    import { Head, Link } from '@inertiajs/vue3';
-    import { onMounted } from 'vue';
-    const appName = import.meta.env.VITE_APP_NAME;
+import { Head, Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+const appName = import.meta.env.VITE_APP_NAME;
 
-    import AOS from 'aos';
-    import 'aos/dist/aos.css';
-    import Navbar from '@/components/Navbar.vue';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import Navbar from '@/components/Navbar.vue';
 
-    onMounted(() => {
+onMounted(() => {
     AOS.init({
         duration: 800,
         once: true,
@@ -27,8 +27,7 @@
         <!-- Navbar -->
         <Navbar />
 
-
-        <!-- Featured Jobs -->
+        <!-- Privacy Policy -->
         <section class="bg-gray-50 dark:bg-gray-900">
             <div class="privacy-policy p-6 max-w-4xl mx-auto text-justify">
                 <h1 class="text-3xl font-bold mb-6">Data Privacy Statement</h1>
@@ -59,6 +58,7 @@
                     <li>Job postings, applications, requirements, and preferences</li>
                     <li>Messages, payments, reviews, bids, and favorite listings</li>
                     <li>Login sessions, OTP codes, role and permission details</li>
+                    <li><strong>Location data</strong> (precise or approximate) for location-based services and job recommendations</li>
                 </ul>
 
                 <h2 class="text-2xl font-semibold mt-6 mb-3">2. Purpose of Data Processing</h2>
@@ -72,6 +72,7 @@
                     <li>Process payments and maintain transaction records</li>
                     <li>Record and display reviews and ratings</li>
                     <li>Enforce platform security through authentication and monitoring</li>
+                    <li>Provide location-based services, job matches, and recommendations</li>
                     <li>Comply with legal and regulatory requirements</li>
                 </ul>
 
@@ -79,15 +80,15 @@
                 <p class="mb-4">
                     SNSU collects personal data through account registration, profile
                     completion, job postings and applications, messaging features, payment
-                    transactions, uploaded documents, and automated system logging.
+                    transactions, uploaded documents, GPS/location permissions, and automated system logging.
                 </p>
 
                 <h2 class="text-2xl font-semibold mt-6 mb-3">4. Recipients of Personal Data</h2>
                 <p class="mb-4">
                     Personal information may be shared with SNSU units for operational
                     purposes, verified platform users (as needed), third-party service
-                    providers for secure processing, and government agencies as required by
-                    law.
+                    providers for secure processing, government agencies as required by
+                    law, and partners providing location-based services.
                 </p>
 
                 <h2 class="text-2xl font-semibold mt-6 mb-3">5. Retention & Disposal</h2>
@@ -100,7 +101,7 @@
                 <p class="mb-4">
                     SNSU applies organizational, physical, and technical safeguards to protect
                     personal data, including role-based access controls, encryption, secure
-                    authentication, and regular security audits.
+                    authentication, regular security audits, and access restrictions for location data.
                 </p>
 
                 <h2 class="text-2xl font-semibold mt-6 mb-3">7. Client Rights</h2>
@@ -109,9 +110,10 @@
                     <li>Access their personal data</li>
                     <li>Request correction or updates to their data</li>
                     <li>
-                        Request deletion, blocking, or withdrawal of data, subject to legal and
-                        contractual obligations
+                        Request deletion, blocking, or withdrawal of data, including location data,
+                        subject to legal and contractual obligations
                     </li>
+                    <li>Opt out of location tracking or location-based recommendations via app settings</li>
                 </ul>
 
                 <h2 class="text-2xl font-semibold mt-6 mb-3">8. Contact Information</h2>
